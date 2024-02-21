@@ -1,0 +1,123 @@
+{% extends "Usuarios/HeaderAndFooterFachada.html" %}
+
+{% block title  %}  Tutorias Alumnos {% endblock %}
+
+{% block body %}
+
+
+<!-- <body> -->
+    <!--Ver Tutorias-->
+    <section class="min-vh-100" style="background-color: #eee;">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-lg-8 col-xl-10">
+                    <div class="card border-top border-bottom border-4" style="border-color: #F08200 !important;">
+                        <div class="card-body p-4">
+                            <h3 class="fw-bold mb-5 text-primary">Tutorias Solicitadas</h3>
+                            
+                            <!--Inicio de table-->
+                            <div class="row justify-content-center align-items-center">
+                                <div class="col-lg-8 col-xl-12">
+                                    <div class="table-responsive"> 
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nombre</th>
+                                                    <th>Fecha</th>
+                                                    <th>Hora</th>
+                                                    <th>Tema</th>
+                                                    <th>Tutor</th>
+                                                    <th>Estado de Aceptación</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for tutoria in object_list %}
+                                                <tr>
+                                                    <td>{{ tutoria.alumno.first_name }} {{ tutoria.alumno.last_name }}</td>
+                                                    <td>{{ tutoria.fecha|date }}</td>
+                                                    <td>{{ tutoria.fecha|date:"P" }}</td>
+                                                    <td>{{ tutoria.get_tema_display }} </td>
+                                                    <td>{{ tutoria.tutor.first_name }} {{ tutoria.tutor.last_name }}</td>
+                                                    <td>
+                                                        {% if tutoria.estado == 'Aceptado' %}
+                                                        <span class="badge bg-success">Aceptada</span>
+                                                        <span class="badge bg-success">Aceptado</span>
+                                                        {% elif tutoria.estado == 'Rechazado' %}
+                                                        <span class="badge badge-warning text-dark">Rechazada</span>
+                                                        {% else %}
+                                                        <span class="badge badge-warning text-dark">Pendiente</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        <a href="{% url 'Tutorias-update' tutoria.pk %}" class="btn btn-primary btn-sm">Editar</a>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Fin de table-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- No borras por si lo que hiso felipe la caga
+        <section style="background-color: #eee;">
+            <div class="container">
+                <h3 class="fw-bold mb-5 text-primary">Tutorias Solicitadas</h3>
+                <div class="row justify-content-center align-items-center">
+                <div class="col-lg-10">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Tema</th>
+                                <th>Tutor</th>
+                                <th>Estado de Aceptación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tutoria in object_list %}
+                            <tr>
+                                <td>{{ tutoria.alumno.first_name }} {{ tutoria.alumno.last_name }}</td>
+                                <td>{{ tutoria.fecha|date }}</td>
+                                <td>{{ tutoria.fecha|date:"P" }}</td>
+                                <td>{{ tutoria.get_tema_display }} </td>
+                                <td>{{ tutoria.tutor.first_name }} {{ tutoria.tutor.last_name }}</td>
+                                <td>
+                                    {% if tutoria.estado == 'Aceptado' %}
+                                    <span class="badge bg-success">Aceptada</span>
+                                    <span class="badge bg-success">Aceptado</span>
+                                    {% elif tutoria.estado == 'Rechazado' %}
+                                    <span class="badge badge-warning text-dark">Rechazada</span>
+                                    {% else %}
+                                    <span class="badge badge-warning text-dark">Pendiente</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'Tutorias-update' tutoria.pk %}" class="btn btn-primary btn-sm">Editar</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+-->
+    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+<!-- </body> -->
+
+{% endblock %}

@@ -1,0 +1,26 @@
+- [x] Lista tutorados - Enlazar alumnos a su perfil correspondiente
+- [ ] Lista tutorados - El tutor puede solicitar tutoria con el alumno (requiere cambiar como se crean tutorias)
+- [ ] Perfil - Subir la trayectoria académica (DESPUES)
+- [ ] Perfil - Subir foto
+- [ ] Perfil - Editar perfil
+- [ ] Recuperar contraseña
+- [ ] Cambiar contraseña en perfil
+
+# Anotaciones de la junta
+- [x] Cambiar el navbar porque genera un error porque no distingue entre los diversos usuarios.
+- [ ] Realizar un llamado especifico por parte de los tutores hacia los tutorados.  
+- [ ] Revisar el problema para subir la trayectoria escolar. - Subir un archivo (dummy) que se pueda consultar.  
+- [ ] Revisar error de historial de tutorias desde el perfil del tutor- ¿Dónde se almacenan las tutorias ya dadas?  
+- [ ] Generar un reporte por profesor acerca de las tutorias (no importa si es un archivo de texto).
+- [x] Agregar que la Información de la tutoria sea opcional.  
+- [ ] ¿Cómo se da cuenta el tutor que tiene una tutoria pendiente? - ¿Hay notificaciones o hay alguna otra forma?  
+ - [ ] Registrar con QR y que lleve a solicitud de tutoria con fecha pre-llenada.  
+ - [ ] Se debe poder aceptar/rechazar la tutoria por parte del tutor. (Notificación o pop-up)  
+- [ ] Revisar el filtrado por alumno en ka vista Lista de tutorias.  
+- [ ] Poder cambiar el horario de tutoria por parte del tutor en vista Lista de tutorias.  
+- [ ] Modificar los textos "fecha" y "hora" por "fecha de la tutoria" y "hora de la tutoria" en la vista Lista de tutorias.
+- [ ] ¿Los alumnos podrán modificar fecha y hora de la tutoria?  
+- [ ] Predefinición de horarios de tutorias para que el alumno no pueda seleccionar horarios en donde el profesor no pueda dar tutorias. - ¿Cómo se avisaría al alumno que la tutoría fue aceptada?  
+- [ ] Revisar si los alumnos, profesores y coord. pueden recibir correos electrónicos para avisarles de modificación de fecha u horario de tutorías. 
+- [ ] Notificaciones vía correo opcionales.  
+- [ ] En tutorias rápidas que el tutor registre el tema y el alumno únicamente envíe la solicitud. (?) - O que el alumno ponga el tema (?)

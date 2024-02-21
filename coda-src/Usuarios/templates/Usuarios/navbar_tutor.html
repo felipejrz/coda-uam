@@ -1,0 +1,16 @@
+{% extends "Usuarios/base.html" %}
+
+{% block navbar %}
+
+<li class="nav-item">
+    <a class="nav-link text-primary" href="{% url 'Tutorias-historial' %}" >Historial de tutorias</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link text-primary" href="{% url 'Tutorados-tutor' %}">Lista de tutorados</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link text-primary" href="{% url 'Tutorias-tutor' %}">Tutorias Asignadas</a>
+</li>
+
+{% endblock %}
+
