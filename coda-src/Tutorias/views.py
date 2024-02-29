@@ -4,7 +4,7 @@ from django.db.models.query import QuerySet
 from django.forms.models import BaseModelForm
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
-from django.contrib.auth.mixins import LoginRequiredMixin
+#from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView
@@ -16,13 +16,12 @@ from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 
 from datetime import datetime
-from django.contrib.auth.decorators import login_required
 
 from .models import Tutoria, Tutor, Alumno
 from .forms import FormTutorias
 from .constants import PENDIENTE, ACEPTADO, RECHAZADO
 from Usuarios.constants import TUTOR, ALUMNO, COORDINADOR, TEMPLATES, CORREO
-from Usuarios.views import ContextConRolesMixin, ContextNotificationsMixin
+from Usuarios.views import BaseAccessMixin, CodaViewMixin, TutorViewMixin, AlumnoViewMixin, CordinadorViewMixin
 from notifications.signals import notify
 from smtplib import SMTPException
 
@@ -44,7 +43,7 @@ class RechazarTutoriaView(View):
         tutoria.save()
         return redirect('Tutorias-tutor')    
     
-class TutoriaUpdateView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, UpdateView):
+class TutoriaUpdateView(BaseAccessMixin, UpdateView):
     model = Tutoria
     fields = ['tema', 'fecha', 'descripcion']
 
@@ -60,8 +59,10 @@ class TutoriaUpdateView(LoginRequiredMixin, ContextNotificationsMixin, ContextCo
 
         notify.send(tutor, recipient=recipient, verb='Tutoria Modificada')
         return super().form_valid(form)
+    
+    
 # Solicitud Tutorias
-class TutoriaCreateView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, CreateView):
+class TutoriaCreateView(AlumnoViewMixin, CreateView):
     #model = Tutoria
     #fields = ['tema', 'fecha', 'descripcion']
 
@@ -101,7 +102,7 @@ class TutoriaCreateView(LoginRequiredMixin, ContextNotificationsMixin, ContextCo
 
 # Ver Tutorias
 # TODO Añadir verificación de permisos de acceso a la tutoria
-class TutoriasDetailView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, DetailView):
+class TutoriasDetailView(BaseAccessMixin, DetailView):
      
     model = Tutoria
 
@@ -125,7 +126,7 @@ class TutoriasDetailView(LoginRequiredMixin, ContextNotificationsMixin, ContextC
         
         return queryset
     
-class HistorialTutoriasListView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, ListView):
+class HistorialTutoriasListView(BaseAccessMixin, ListView):
      
     model = Tutoria
     template_name='Tutorias/historialtutoria.html'
@@ -148,7 +149,7 @@ class HistorialTutoriasListView(LoginRequiredMixin, ContextNotificationsMixin, C
 
 
 
-class VerTutoriasCordinadorListView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, ListView):
+class VerTutoriasCordinadorListView(CordinadorViewMixin, ListView):
      
     model = Tutoria
     template_name='Tutorias/verTutorias_cordinador.html'
@@ -160,19 +161,33 @@ class VerTutoriasCordinadorListView(LoginRequiredMixin, ContextNotificationsMixi
         return queryset 
 
 
-class VerTutoriasCodaListView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, ListView):
+class VerTutoriasCodaListView(CodaViewMixin, ListView):
      
     model = Tutoria
     template_name='Tutorias/verTutorias_cooda.html'
+    
 
     def get_queryset(self) -> QuerySet[Any]:
         
-        queryset = super().get_queryset().all()   
+        queryset = super().get_queryset().filter(tutor=self.kwargs.get('pk'))   
         
         return queryset 
     
+    # def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    #     context = super().get_context_data(**kwargs)
+    #     alumnos = Alumno.objects.all()
+    #     tutores = Tutor.objects.all()
+    #     context["alumnos"] = alumnos
+    #     context["tutores"] = tutores
+    #     return context
 
-class VerTutoriasTutorListView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, ListView):
+class VerTutoresListView(CodaViewMixin, ListView):
+    model = Tutor
+    template_name = 'Tutorias/verTutores_coda.html'
+    
+    
+
+class VerTutoriasTutorListView(TutorViewMixin, ListView):
      
     model = Tutoria
     template_name='Tutorias/verTutorias_tutor.html'
@@ -191,7 +206,7 @@ class VerTutoriasTutorListView(LoginRequiredMixin, ContextNotificationsMixin, Co
         return context
 
 
-class VerTutoriasAlumnoListView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, ListView):
+class VerTutoriasAlumnoListView(AlumnoViewMixin, ListView):
      
     model = Tutoria
     template_name='Tutorias/verTutorias_alumno.html'
@@ -201,24 +216,24 @@ class VerTutoriasAlumnoListView(LoginRequiredMixin, ContextNotificationsMixin, C
         # Tutorias correspondientes al alumno
         
         queryset = super().get_queryset().filter(alumno=self.request.user)
-        if self.request.user.is_superuser == 1: 
+        #if self.request.user.is_superuser == 1: 
             # Muestra todas las tutorias para el primer usuario creado (generalmente el primer superuser)
-            queryset = super().get_queryset().all()
+            #queryset = super().get_queryset().all()
         
         return queryset
     
 
 # TODO Eliminar para prod
-class DebugTutoriasView(LoginRequiredMixin, ListView):
+# class DebugTutoriasView(LoginRequiredMixin, ListView):
 
-    model = Tutoria
-    template_name='Tutorias/verTutorias_coordinador.html'
+#     model = Tutoria
+#     template_name='Tutorias/verTutorias_coordinador.html'
 
-    def get_queryset(self) -> QuerySet[Any]:
-        return super().get_queryset()
+#     def get_queryset(self) -> QuerySet[Any]:
+#         return super().get_queryset()
     
     
-class QuickCreateTutoriaView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, CreateView):
+class QuickCreateTutoriaView(AlumnoViewMixin, CreateView):
     model = Tutoria
     template_name = 'Tutorias/registrar-tutoria.html'
     success_url = reverse_lazy('login_success')
@@ -264,7 +279,7 @@ class QuickCreateTutoriaView(LoginRequiredMixin, ContextNotificationsMixin, Cont
         return self.initial 
       
     
-class VerTutoradosTutorListView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, ListView):
+class VerTutoradosTutorListView(TutorViewMixin, ListView):
      
     model = Alumno
     template_name='Tutorias/list_tutorados.html'
@@ -305,7 +320,7 @@ class QRCodeView(View):
         return response
 
 
-class CrearTutoriaPorAlumnoView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, CreateView):
+class CrearTutoriaPorAlumnoView(TutorViewMixin, CreateView):
     model = Tutoria
     form_class = FormTutorias
     template_name = 'Tutorias/solicitudTutoria.html'

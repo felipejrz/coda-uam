@@ -12,52 +12,13 @@ from .models import Usuario, Tutor, Alumno, Coda, Cordinador
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
-from .constants import TUTOR, ALUMNO, COORDINADOR,CODA, TEMPLATES
+
 from django.views.generic.list import ListView
 from django.http import HttpResponseBadRequest
 from django.views.generic import View
+
 from . import forms as userForms
-
-# Create your views here.
-
-class ContextConRolesMixin:
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        user_rol = self.request.user.get_rol()
-        if user_rol == ALUMNO:
-            context["header_footer"] = TEMPLATES[ALUMNO]
-        elif user_rol == TUTOR:
-            context["header_footer"] = TEMPLATES[TUTOR]
-        elif user_rol == COORDINADOR:
-            context["header_footer"] = TEMPLATES[COORDINADOR]
-        elif user_rol == CODA:
-            context["header_footer"] = TEMPLATES[CODA]
-        return context
-
-class ContextNotificationsMixin:
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        user = Usuario.objects.get(pk=self.request.user.pk)
-        notifications_raw = user.notifications.unread()
-        unread_notifications = []
-
-        for notification in notifications_raw:
-            notificacion_temp = {}
-            notificacion_temp["header"] =  "Notificacion" if not notification.description else f"{notification.description}"
-            notificacion_temp["text"] = f'{notification.verb} por {Usuario.objects.get(matricula=notification.actor).get_full_name()}'
-            
-            notificacion_temp["time"] = notification.timestamp
-            #remitente = 
-            #notificacion_temp["origen"] = f'{}'
-            unread_notifications.append(notificacion_temp)
-            
-
-       
-        context["notificaciones_list"] = unread_notifications
-        return context
-
+from .mixins import BaseAccessMixin, CodaViewMixin, AlumnoViewMixin, CordinadorViewMixin, TutorViewMixin
 
 # TODO Remove test views
 def login_view_test(request):
@@ -74,7 +35,7 @@ def recordarcontras_view_test(request):
 
 
 
-class PerfilAlumnoView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, DetailView):
+class PerfilAlumnoView(BaseAccessMixin, DetailView):
 
     model = Alumno
     template_name = 'Usuarios/perfil_alumno.html'
@@ -85,7 +46,7 @@ class PerfilAlumnoView(LoginRequiredMixin, ContextNotificationsMixin, ContextCon
         
         return context
 
-class PerfilTutorView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, DetailView):
+class PerfilTutorView(BaseAccessMixin, DetailView):
 
     model = Tutor
     template_name = 'Usuarios/perfil_tutor.html'
@@ -111,7 +72,7 @@ def redirect_perfil(request):
     
     return redirect('perfil-alumno', pk=request.user.pk)
 
-class PerfilCodaView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, DetailView):
+class PerfilCodaView(BaseAccessMixin, DetailView):
 
     model = Coda
     template_name = 'Usuarios/perfil_cooda.html'
@@ -123,7 +84,7 @@ class PerfilCodaView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRo
         return super().get_queryset()
     
 
-class PerfilCordinadorView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, DetailView):
+class PerfilCordinadorView(BaseAccessMixin, DetailView):
 
     model = Cordinador
     template_name = 'Usuarios/perfil_cordinador.html'
@@ -152,13 +113,13 @@ def redirect_perfil(request):
     
 
 # TODO Eliminar para prod
-class DebugTutoriasView(LoginRequiredMixin, ListView):
+# class DebugTutoriasView(LoginRequiredMixin, ListView):
 
-    model = Tutor
-    template_name='Tutorias/verTutorias_coordinador.html'
+#     model = Tutor
+#     template_name='Tutorias/verTutorias_coordinador.html'
 
-    def get_queryset(self) -> QuerySet[Any]:
-        return super().get_queryset()
+#     def get_queryset(self) -> QuerySet[Any]:
+#         return super().get_queryset()
     
 
 class UsuarioLoginView(LoginView):
@@ -193,7 +154,7 @@ def login_success(request):
     # if Usuario.objects.filter(pk=request.user.pk).exists:
     #     return redirect('Tutorias-coordinador')
 
-class ChangePasswordView(LoginRequiredMixin, ContextConRolesMixin, PasswordChangeView):
+class ChangePasswordView(BaseAccessMixin, PasswordChangeView):
     template_name = 'Usuarios/change_password.html'  # Create a template for password change form
     success_url = reverse_lazy('password_change_done')  # Redirect to this URL after a successful password change
 
@@ -218,29 +179,29 @@ class BorrarNotificaciones(View):
 # Conjunto de Views Para Agregar usuarios
 
 #PermissionRequiredMixin
-class CreateAlumnoView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin,  CreateView):
+class CreateAlumnoView(CodaViewMixin, CreateView):
 
     template_name = 'Usuarios/agregar_alumno.html'
-    success_url = reverse_lazy('login_success')
+    success_url = reverse_lazy('tutores-coda')
     #model = Alumno
     form_class = userForms.FormAlumno
-    permission_required="Usuarios.add_Alumno"
+
     
 #PermissionRequiredMixin
-class CreateCordinadorView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin,  CreateView):
+class CreateCordinadorView(CodaViewMixin, CreateView):
     template_name = 'Usuarios/agregar_cordinador.html'
-    success_url = reverse_lazy('login_success')
+    success_url = reverse_lazy('tutores-coda')
     #model = Cordinador
     form_class = userForms.FormCordinador
-    permission_required="Usuarios.add_Cordinador"
+
     
 #PermissionRequiredMixin
-class CreateTutorView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin,  CreateView):
+class CreateTutorView(CodaViewMixin, CreateView):
     template_name = 'Usuarios/agregar_tutor.html'
-    success_url = reverse_lazy('login_success')
+    success_url = reverse_lazy('tutores-coda')
     #model = Tutor
     form_class = userForms.FormTutor
-    permission_required="Usuarios.add_Tutor"
+
     
 
 
