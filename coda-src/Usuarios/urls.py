@@ -26,7 +26,7 @@ urlpatterns = [
     # URLs del Coda para creación de usuarios
     path('registrar-alumno/', views.CreateAlumnoView.as_view(), name='crear-alumno'),
     path('registrar-tutor/', views.CreateTutorView.as_view(), name='crear-tutor'),
-    path('registrar-cordinador/', views.CreateCordinadorView.as_view(), name='crear-cordinador'),
+    path('registrar-coordinador/', views.CreateCordinadorView.as_view(), name='crear-coordinador'),
     
 
 
