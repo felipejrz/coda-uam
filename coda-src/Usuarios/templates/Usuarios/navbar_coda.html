@@ -1,0 +1,16 @@
+{% extends "Usuarios/base.html" %}
+
+{% block navbar %}
+
+<li class="nav-item">
+    <a class="nav-link text-primary" href="{% url 'Tutorias-coda' %}" >Tutorias</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link text-primary" href="{% url 'Tutores-list' %}">Alumnos</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link text-primary" href="{% url 'Alumnos-list' %}">Tutores</a>
+</li>
+
+{% endblock %}
+

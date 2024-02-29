@@ -4,16 +4,19 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse
 from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView
 from django.views.generic import TemplateView
-from .models import Usuario, Tutor, Alumno
+from .models import Usuario, Tutor, Alumno, Coda, Cordinador
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
-from .constants import TUTOR, ALUMNO, COORDINADOR, TEMPLATES
+from .constants import TUTOR, ALUMNO, COORDINADOR,CODA, TEMPLATES
 from django.views.generic.list import ListView
+from django.http import HttpResponseBadRequest
 from django.views.generic import View
+from . import forms as userForms
 
 # Create your views here.
 
@@ -28,6 +31,8 @@ class ContextConRolesMixin:
             context["header_footer"] = TEMPLATES[TUTOR]
         elif user_rol == COORDINADOR:
             context["header_footer"] = TEMPLATES[COORDINADOR]
+        elif user_rol == CODA:
+            context["header_footer"] = TEMPLATES[CODA]
         return context
 
 class ContextNotificationsMixin:
@@ -53,6 +58,8 @@ class ContextNotificationsMixin:
         context["notificaciones_list"] = unread_notifications
         return context
 
+
+# TODO Remove test views
 def login_view_test(request):
 
     return render(request, 'Usuarios/login.html')
@@ -64,6 +71,8 @@ def perfil_view_test(request):
 def recordarcontras_view_test(request):
 
     return render(request, 'Usuarios/recordarContrasenia.html')
+
+
 
 class PerfilAlumnoView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, DetailView):
 
@@ -95,11 +104,62 @@ def redirect_perfil(request):
     
     if Alumno.objects.filter(pk=request.user.pk).exists():
         return redirect('perfil-alumno', pk=request.user.pk)
+    if Coda.objects.filter(pk=request.user.pk).exists():
+        return redirect('perfil-coda', pk=request.user.pk)
+    if Cordinador.objects.filter(pk=request.user.pk).exists():
+        return redirect('perfil-cordinador', pk=request.user.pk)
+    
+    return redirect('perfil-alumno', pk=request.user.pk)
+
+class PerfilCodaView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, DetailView):
+
+    model = Coda
+    template_name = 'Usuarios/perfil_cooda.html'
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        return super().get_context_data(**kwargs)
+
+    def get_queryset(self) -> QuerySet[Any]:
+        return super().get_queryset()
+    
+
+class PerfilCordinadorView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, DetailView):
+
+    model = Cordinador
+    template_name = 'Usuarios/perfil_cordinador.html'
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        return super().get_context_data(**kwargs)
+
+    def get_queryset(self) -> QuerySet[Any]:
+        return super().get_queryset()
+
+@login_required
+def redirect_perfil(request):
+
+    if Tutor.objects.filter(pk=request.user.pk).exists():
+        return redirect('perfil-tutor', pk=request.user.pk)
+    
+    if Alumno.objects.filter(pk=request.user.pk).exists():
+        return redirect('perfil-alumno', pk=request.user.pk)
+    if Coda.objects.filter(pk=request.user.pk).exists():
+        return redirect('perfil-coda', pk=request.user.pk)
+    if Cordinador.objects.filter(pk=request.user.pk).exists():
+        return redirect('perfil-cordinador', pk=request.user.pk)
+    
     
     return redirect('perfil-alumno', pk=request.user.pk)
     
 
+# TODO Eliminar para prod
+class DebugTutoriasView(LoginRequiredMixin, ListView):
 
+    model = Tutor
+    template_name='Tutorias/verTutorias_coordinador.html'
+
+    def get_queryset(self) -> QuerySet[Any]:
+        return super().get_queryset()
+    
 
 class UsuarioLoginView(LoginView):
 
@@ -122,12 +182,16 @@ def login_success(request):
     
     if Tutor.objects.filter(pk=request.user.pk).exists():
         return redirect('Tutorias-tutor')
+    if Cordinador.objects.filter(pk=request.user.pk).exists():
+        return redirect('Tutorias-cordinador')
+    if Coda.objects.filter(pk=request.user.pk).exists():
+        return redirect('Tutorias-Coda')
     
-    print('Usuario no definido')
-    return redirect('debug-tutorias')
+    print('ERROR: Usuario no definido')
+    return HttpResponseBadRequest("ERROR. Tipo de usuario no definido")
+    #return redirect()
     # if Usuario.objects.filter(pk=request.user.pk).exists:
     #     return redirect('Tutorias-coordinador')
-
 
 class ChangePasswordView(LoginRequiredMixin, ContextConRolesMixin, PasswordChangeView):
     template_name = 'Usuarios/change_password.html'  # Create a template for password change form
@@ -149,6 +213,36 @@ class BorrarNotificaciones(View):
 
 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+# Conjunto de Views Para Agregar usuarios
+
+#PermissionRequiredMixin
+class CreateAlumnoView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin,  CreateView):
+
+    template_name = 'Usuarios/agregar_alumno.html'
+    success_url = reverse_lazy('login_success')
+    #model = Alumno
+    form_class = userForms.FormAlumno
+    permission_required="Usuarios.add_Alumno"
+    
+#PermissionRequiredMixin
+class CreateCordinadorView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin,  CreateView):
+    template_name = 'Usuarios/agregar_cordinador.html'
+    success_url = reverse_lazy('login_success')
+    #model = Cordinador
+    form_class = userForms.FormCordinador
+    permission_required="Usuarios.add_Cordinador"
+    
+#PermissionRequiredMixin
+class CreateTutorView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin,  CreateView):
+    template_name = 'Usuarios/agregar_tutor.html'
+    success_url = reverse_lazy('login_success')
+    #model = Tutor
+    form_class = userForms.FormTutor
+    permission_required="Usuarios.add_Tutor"
+    
+
 
 # class AceptarTutoriaView(View):
 #     def post(self, request, pk):

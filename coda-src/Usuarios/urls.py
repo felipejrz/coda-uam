@@ -10,6 +10,8 @@ urlpatterns = [
     #path('perfil-test/', views.perfil_view_test, name='perfil-test'),
     path('perfil-alumno/<int:pk>/', views.PerfilAlumnoView.as_view(), name='perfil-alumno'),
     path('perfil-tutor/<int:pk>/', views.PerfilTutorView.as_view(), name='perfil-tutor'),
+    path('perfil-cordinador/<int:pk>/', views.PerfilCordinadorView.as_view(), name='perfil-cordinador'),
+    path('perfil-coda/<int:pk>/', views.PerfilCodaView.as_view(), name='perfil-coda'),
     path('perfil/', views.redirect_perfil, name='perfil'),
     path('reset-password/', auth_views.PasswordResetView.as_view(), name='reset_password'),
     re_path(r'^inbox/notifications/', include(notifications.urls, namespace='notifications')),
@@ -20,6 +22,13 @@ urlpatterns = [
     path('password-change-done/', views.PasswordChangeDoneView.as_view(), name='password_change_done'),
 
     path('remove-notifications/', views.BorrarNotificaciones.as_view(), name='remove-notifications'),
+
+    # URLs del Coda para creación de usuarios
+    path('registrar-alumno/', views.CreateAlumnoView.as_view(), name='crear-alumno'),
+    path('registrar-tutor/', views.CreateTutorView.as_view(), name='crear-tutor'),
+    path('registrar-cordinador/', views.CreateCordinadorView.as_view(), name='crear-cordinador'),
+    
+
 
     # ... (other existing URL patterns)
 ]
