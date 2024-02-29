@@ -5,7 +5,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-from .models import Usuario, Tutor, Alumno
+from .models import Usuario, Tutor, Alumno, Coda, Cordinador 
 
 #admin.site.register(Usuario, BaseUserAdmin)
 
@@ -13,6 +13,18 @@ class TutorResource(resources.ModelResource):
 
     class Meta:
         model = Tutor
+        fields = ('id', 'password', 'email', 'coordinacion', 'carrera', 'first_name', 'last_name')
+
+class CodaResource(resources.ModelResource):
+
+    class Meta:
+        model = Coda
+        fields = ('id', 'password', 'email', 'coordinacion', 'carrera', 'first_name', 'last_name')
+
+class CordinadorResource(resources.ModelResource):
+
+    class Meta:
+        model = Cordinador
         fields = ('id', 'password', 'email', 'coordinacion', 'carrera', 'first_name', 'last_name')
 
 class AlumnoResource(resources.ModelResource):
@@ -62,7 +74,54 @@ class TutorAdmin(ImportExportModelAdmin, UserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password', 'matricula')}),
         (('Información Personal'), {'fields': ('first_name', 'last_name', 'cubiculo', 'coordinacion', 'foto',)}),
-        (('Permisos'), {'fields': ('is_active', 'es_coordinador', 'is_staff', 'is_superuser',
+        (('Permisos'), {'fields': ('is_active', 'is_staff', 'is_superuser',
+                                       'groups', 'user_permissions')}),
+        (('Fechas importantes'), {'fields': ('last_login', 'date_joined')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email','matricula', 'cubiculo', 'password1', 'password2'),
+        }),
+    )
+    list_display = ('pk', 'email', 'matricula', 'coordinacion', 'first_name', 'last_name', 'is_staff', 'es_coordinador')
+    search_fields = ('pk', 'email', 'matricula', 'coordinacion', 'first_name', 'last_name')
+    ordering = ('pk','coordinacion')
+
+    actions = [actualizar_usuarios]
+
+
+@admin.register(Coda)
+class CodaAdmin(ImportExportModelAdmin, UserAdmin):
+    """Define admin model for custom User model with no email field."""
+
+    fieldsets = (
+        (None, {'fields': ('email', 'password', 'matricula')}),
+        (('Información Personal'), {'fields': ('first_name', 'last_name', 'cubiculo', 'coordinacion', 'foto',)}),
+        (('Permisos'), {'fields': ('is_active', 'is_staff', 'is_superuser',
+                                       'groups', 'user_permissions')}),
+        (('Fechas importantes'), {'fields': ('last_login', 'date_joined')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email','matricula', 'cubiculo', 'password1', 'password2'),
+        }),
+    )
+    list_display = ('pk', 'email', 'matricula', 'coordinacion', 'first_name', 'last_name', 'is_staff', 'es_coordinador')
+    search_fields = ('pk', 'email', 'matricula', 'coordinacion', 'first_name', 'last_name')
+    ordering = ('pk','coordinacion')
+
+    actions = [actualizar_usuarios]
+
+@admin.register(Cordinador)
+class CordinadorAdmin(ImportExportModelAdmin, UserAdmin):
+    """Define admin model for custom User model with no email field."""
+
+    fieldsets = (
+        (None, {'fields': ('email', 'password', 'matricula')}),
+        (('Información Personal'), {'fields': ('first_name', 'last_name', 'cubiculo', 'coordinacion', 'foto',)}),
+        (('Permisos'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
         (('Fechas importantes'), {'fields': ('last_login', 'date_joined')}),
     )

@@ -1,11 +1,14 @@
 TUTOR = "TUT"
 COORDINADOR = "COR"
 ALUMNO = "ALU"
+CODA = "CODA"
 
 ROLES = [
+    ('', "Seleccione Rol"),
     (TUTOR, "Tutor"),
     (COORDINADOR, "Coordinador"),
     (ALUMNO, "Alumno"),
+    (CODA, "Coda"),
 ]
 
 
@@ -13,6 +16,7 @@ MATEMATICAS = "MAT"
 COMPUTACION = "COM"
 
 CARRERAS = [
+        ('', "Seleccione Carrera"),
         (MATEMATICAS, "Matemáticas Aplicadas"),
         (COMPUTACION, "Ingeniería en Computación"),
     ]
@@ -23,7 +27,8 @@ TEMPLATES = {
     # COORDINADOR: 'Usuarios/HeaderFooterCoord.html',
     ALUMNO: 'Usuarios/navbar_alumno.html',
     TUTOR: 'Usuarios/navbar_tutor.html',
-    COORDINADOR: 'Usuarios/navbar_coord.html',
+    COORDINADOR: 'Usuarios/navbar_tutor.html',
+    CODA: 'Usuarios/navbar_tutor.html',
 }
 
 CORREO = 'tutorias.beta.uamc@gmail.com'

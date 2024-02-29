@@ -49,7 +49,7 @@ class Usuario(AbstractUser):
     foto = models.ImageField(null=True, blank=True, upload_to=usr_pfp_path)
     email = models.EmailField(unique=True)
     correo_personal = models.EmailField(max_length=50, blank=True, null=True)
-    rol = models.CharField(max_length=3, choices=ROLES, default="USR")
+    rol = models.CharField(max_length=8, choices=ROLES, default="USR")
     #nombre = models.CharField(max_length=150)
 
     USERNAME_FIELD = "email"
@@ -80,15 +80,54 @@ class Tutor(Usuario):
     def save(self, commit=True) -> None:
         self.rol = "TUT"
 
-        if self.es_coordinador :
-            self.rol = "COR"
+        # Deprecated
+        # if self.es_coordinador :
+        #     self.rol = "COR"
             
         return super(Tutor, self).save()
+    
+class GrupoCoda():
+    pass
+
+
+
+class Coda(Usuario):
+    cubiculo = models.IntegerField()
+    horario  = models.FileField(null=True, blank=True)
+    coordinacion = models.CharField(max_length=30, choices=CARRERAS)
+    es_coordinador = models.BooleanField(default=False)
+    tema_tutorias = models.CharField(max_length=4,choices=TEMAS, default=OTRO) # Tema por defecto para las tutorias
+
+    class Meta:
+        verbose_name = 'CODA'
+        verbose_name_plural = 'CODAA'
+
+    def save(self, commit=True) -> None:
+        self.rol = "CODA"
+        return super(Coda, self).save()
+    
+
+
+class Cordinador(Usuario):
+    cubiculo = models.IntegerField()
+    horario  = models.FileField(null=True, blank=True)
+    coordinacion = models.CharField(max_length=30, choices=CARRERAS)
+    es_coordinador = models.BooleanField(default=True)
+    tutor_tutorias = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Cordinador'
+        verbose_name_plural = 'Cordinadores'
+
+    def save(self, commit=True) -> None:
+        self.rol = "COR"
+        return super(Cordinador, self).save()
 
 def alumno_trayectoria_path(instance, filename):
     return f'Usuarios/trayectorias/alumno_{instance.user.matricula}/{filename}'
 
 class Alumno(Usuario):
+    
     carrera = models.CharField(max_length=30, choices=CARRERAS)
     trayectoria = models.FileField(null=True, blank=True, upload_to=alumno_trayectoria_path)
     tutor_asignado = models.ForeignKey(Tutor, on_delete=models.PROTECT)
@@ -96,12 +135,17 @@ class Alumno(Usuario):
     def save(self, commit=True) -> None:
         self.rol = "ALU"
         return super(Alumno, self).save()
+    
     class Meta:
         verbose_name = 'Alumno'
         verbose_name_plural = 'Alumnos'
+
     #@property
     #def get_tutor_fullname(self) -> str:
     #    return f'{self.tutor_asignado.first_name} {self.tutor_asignado.last_name}'
+
+
+
 
 # class Coordinador(Usuario):
 #     coordinacion = models.CharField(max_length=30, choices=CARRERAS)
