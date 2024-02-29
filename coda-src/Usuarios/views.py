@@ -167,7 +167,7 @@ class BorrarNotificaciones(View):
 class CreateAlumnoView(CodaViewMixin, CreateView):
 
     template_name = 'Usuarios/agregar_alumno.html'
-    success_url = reverse_lazy('tutores-coda')
+    success_url = reverse_lazy('Tutores-Coda')
     #model = Alumno
     form_class = userForms.FormAlumno
 
@@ -175,7 +175,7 @@ class CreateAlumnoView(CodaViewMixin, CreateView):
 #PermissionRequiredMixin
 class CreateCordinadorView(CodaViewMixin, CreateView):
     template_name = 'Usuarios/agregar_cordinador.html'
-    success_url = reverse_lazy('tutores-coda')
+    success_url = reverse_lazy('Tutores-Coda')
     #model = Cordinador
     form_class = userForms.FormCordinador
 
@@ -183,7 +183,7 @@ class CreateCordinadorView(CodaViewMixin, CreateView):
 #PermissionRequiredMixin
 class CreateTutorView(CodaViewMixin, CreateView):
     template_name = 'Usuarios/agregar_tutor.html'
-    success_url = reverse_lazy('tutores-coda')
+    success_url = reverse_lazy('Tutores-Coda')
     #model = Tutor
     form_class = userForms.FormTutor
 

@@ -16,13 +16,13 @@ class FormTutor(FormUsuario):
     
     class Meta:
         model = Tutor
-        fields = ['first_name', 'last_name', 'cubiculo', 'coordinacion']
+        fields = ['first_name', 'last_name', 'matricula', 'email', 'correo_personal', 'cubiculo', 'coordinacion', 'password1', 'password2']
     pass
 
 class FormCordinador(FormUsuario):
     class Meta:
         model = Cordinador
-        fields = ['first_name', 'last_name', 'cubiculo', 'coordinacion']
+        fields = ['first_name', 'last_name', 'matricula', 'email', 'correo_personal', 'cubiculo', 'coordinacion', 'password1', 'password2']
     pass
 
 
