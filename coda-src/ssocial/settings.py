@@ -30,7 +30,7 @@ SESSION_COOKIE_SECURE=False
 #SECURE_SSL_REDIRECT=True
 #SECURE_HSTS_SECONDS=60
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', os.environ['TUTORIAS_DOMINIO'], os.environ['IP_COMPUTADORA']]
 CSRF_TRUSTED_ORIGINS = ['http://'+os.environ['TUTORIAS_DOMINIO']]
