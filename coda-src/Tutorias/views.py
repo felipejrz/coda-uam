@@ -173,19 +173,31 @@ class VerTutoriasCodaListView(CodaViewMixin, ListView):
         
         return queryset 
     
-    # def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-    #     context = super().get_context_data(**kwargs)
-    #     alumnos = Alumno.objects.all()
-    #     tutores = Tutor.objects.all()
-    #     context["alumnos"] = alumnos
-    #     context["tutores"] = tutores
-    #     return context
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        tutor = Tutor.objects.get(pk=self.kwargs.get('pk'))
+        context["tutor"] = tutor
+        return context
 
 class VerTutoresListView(CodaViewMixin, ListView):
     model = Tutor
     template_name = 'Tutorias/verTutores_coda.html'
     
+class VerTutoradosCodaListView(CodaViewMixin, ListView):
+    model = Alumno
+    template_name = 'Tutorias/verTutorados_coda.html'
     
+    def get_queryset(self) -> QuerySet[Any]:
+        
+        queryset = super().get_queryset().filter(tutor_asignado=self.kwargs.get('pk'))   
+        
+        return queryset 
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        tutor = Tutor.objects.get(pk=self.kwargs.get('pk'))
+        context["tutor"] = tutor
+        return context
 
 class VerTutoriasTutorListView(TutorViewMixin, ListView):
      

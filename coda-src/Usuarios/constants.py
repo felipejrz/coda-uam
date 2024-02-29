@@ -28,7 +28,7 @@ TEMPLATES = {
     ALUMNO: 'Usuarios/navbar_alumno.html',
     TUTOR: 'Usuarios/navbar_tutor.html',
     COORDINADOR: 'Usuarios/navbar_tutor.html',
-    CODA: 'Usuarios/navbar_tutor.html',
+    CODA: 'Usuarios/navbar_coda.html',
 }
 
 CORREO = 'tutorias.beta.uamc@gmail.com'

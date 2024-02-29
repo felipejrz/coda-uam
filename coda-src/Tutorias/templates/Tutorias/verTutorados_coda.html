@@ -10,7 +10,7 @@
           <div class="col-lg-8 col-xl-10">
               <div class="card border-top border-bottom border-4" style="border-color: #F08200 !important;">
                   <div class="card-body p-4">
-                      <h3 class="fw-bold mb-5 text-primary">Lista de tutores</h3>
+                      <h3 class="fw-bold mb-5 text-primary">Tutorados de: {{tutor.first_name}} {{tutor.last_name}}</h3>
                       
 
                       <!--Inicio de table-->
@@ -20,22 +20,22 @@
                             <tr>
                               <th>Nombre</th>
                               <th>Correo</th>
-                              <th>Número económico</th>
-                              <th>Coordinación</th>
-                              <th>Tutorias</th>
-                              <th>Tutorados</th>
+                              <th>Correo personal</th>
+                              <th>Matrícula</th>
+                              <th>Carrera</th>
+                              
                             </tr>
                           </thead>
                           <tbody>
                             <tr>
-                            {% for tutor in object_list %}
+                            {% for alumno in object_list %}
                             <tr>
-                              <td>{{ tutor.first_name }} {{ tutor.last_name }}</td>
-                              <td>{{ tutor.email}} </td>
-                              <td>{{ tutor.matricula }} </td>
-                              <td>{{ tutor.get_coordinacion_display }}</td>
-                              <td><a href="{% url 'Tutorias-Coda' tutor.pk%}">Ver Tutorias</a></td>
-                              <td><a href="{% url 'Tutorados-Coda' tutor.pk%}">Ver Tutorados</a></td>
+                              <td>{{ alumno.first_name }} {{ alumno.last_name }}</td>
+                              <td>{{ alumno.email}} </td>
+                              <td>{{ alumno.correo_personal|default_if_none:"No registrado" }}</td>
+                              <td>{{ alumno.matricula }} </td>
+                              <td>{{ alumno.get_carrera_display }}</td>
+                              
                             </tr>
                             {% endfor %}
                           </tbody>

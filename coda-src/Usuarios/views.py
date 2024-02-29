@@ -95,21 +95,6 @@ class PerfilCordinadorView(BaseAccessMixin, DetailView):
     def get_queryset(self) -> QuerySet[Any]:
         return super().get_queryset()
 
-@login_required
-def redirect_perfil(request):
-
-    if Tutor.objects.filter(pk=request.user.pk).exists():
-        return redirect('perfil-tutor', pk=request.user.pk)
-    
-    if Alumno.objects.filter(pk=request.user.pk).exists():
-        return redirect('perfil-alumno', pk=request.user.pk)
-    if Coda.objects.filter(pk=request.user.pk).exists():
-        return redirect('perfil-coda', pk=request.user.pk)
-    if Cordinador.objects.filter(pk=request.user.pk).exists():
-        return redirect('perfil-cordinador', pk=request.user.pk)
-    
-    
-    return redirect('perfil-alumno', pk=request.user.pk)
     
 
 # TODO Eliminar para prod
@@ -146,7 +131,7 @@ def login_success(request):
     if Cordinador.objects.filter(pk=request.user.pk).exists():
         return redirect('Tutorias-cordinador')
     if Coda.objects.filter(pk=request.user.pk).exists():
-        return redirect('Tutorias-Coda')
+        return redirect('Tutores-Coda')
     
     print('ERROR: Usuario no definido')
     return HttpResponseBadRequest("ERROR. Tipo de usuario no definido")
