@@ -52,7 +52,7 @@ class CodaViewMixin(BaseAccessMixin, UserPassesTestMixin):
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         return super().get_context_data(**kwargs)
     
-    def test_func(self) -> bool | None:
+    def test_func(self) -> bool:
         return self.request.user.get_rol()==CODA
     
 class TutorViewMixin(BaseAccessMixin, UserPassesTestMixin):
@@ -61,7 +61,7 @@ class TutorViewMixin(BaseAccessMixin, UserPassesTestMixin):
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         return super().get_context_data(**kwargs)
     
-    def test_func(self) -> bool | None:
+    def test_func(self) -> bool:
         return self.request.user.get_rol()==TUTOR
     
 class AlumnoViewMixin(BaseAccessMixin, UserPassesTestMixin):
@@ -70,7 +70,7 @@ class AlumnoViewMixin(BaseAccessMixin, UserPassesTestMixin):
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         return super().get_context_data(**kwargs)
     
-    def test_func(self) -> bool | None:
+    def test_func(self) -> bool:
         return self.request.user.get_rol()==ALUMNO
     
 class CordinadorViewMixin(BaseAccessMixin, UserPassesTestMixin):
@@ -79,5 +79,5 @@ class CordinadorViewMixin(BaseAccessMixin, UserPassesTestMixin):
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         return super().get_context_data(**kwargs)
     
-    def test_func(self) -> bool | None:
+    def test_func(self) -> bool:
         return self.request.user.get_rol()==COORDINADOR
