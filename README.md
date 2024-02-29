@@ -9,25 +9,44 @@ Para facilitar la instalación del entorno, el repositorio incluye archivos de c
 Usando el plugin compose (integrado en docker), podemos configurar el entorno de manera sencilla y utilizando menos comandos que con la configuración manual. 
 
 ### Instalación y configuración del entorno
+La configuración del entorno se hace en el archivo `compose.yaml` encontrado en la raiz de este repositorio.
 
-1. Cambia los valores en `enviroment` dentro de `services` `web` para que se ajusten a las necesidades de tu entorno. Especialmente las variable de entorno `DJANGO_SECRET_KEY`,  `EMAIL_HOST_PASSWORD` y `EMAIL_DOMAIN`.
+1. Cambia los valores en `enviroment:` dentro de `services:` y `web:` para que se ajusten a las necesidades de tu entorno. Especialmente las variable de entorno `DJANGO_SECRET_KEY`,  `EMAIL_HOST_PASSWORD` y `EMAIL_DOMAIN`.
 
 2. Para el despliegue en producción es necesario que cambies las variables de entorno el los servicios `db` y `web`, además de la ubicación en tu equipo donde se almacenaran la base de datos y el código del servidor `volumes`
 ```yaml
+#Configuración base del entorno y contenedores
 services:
   db:
     image: postgres
     volumes:
-      - # Cambiar ubicación en disco de la base de datos
+      - ./data/db:/var/lib/postgresql/data
     environment:
-      - # Cambiar variables de entorno
-    ###  COSAS  ###
+      - POSTGRES_DB=coda
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
   web:
+    build: ./coda-src
+    command: ./docker-entrypoint.sh
     volumes:
-     - # Cambiar ubicación del código en disco, eliminar sección en producción
-    ###  COSAS  ###
+      - ./coda-src:/app
+    ports:
+      - "8000:8000"
     environment:
-      - # Cambiar variables de entorno
+      - DJANGO_SECRET_KEY=django-insecure-0ea983f4d69ba8061a684379fee776c5118e0a16aa305c153a
+      - RDS_DB_NAME=coda
+      - RDS_USERNAME=postgres
+      - RDS_HOSTNAME=db
+      - RDS_PORT=5432
+      - RDS_PASSWORD=postgres
+      - DJANGO_DEBUG=True
+      - IP_COMPUTADORA=127.0.0.1
+      - TUTORIAS_DOMINIO=localhost
+      - EMAIL_DOMAIN=a@a.com
+      - EMAIL_HOST_PASSWORD=1234
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     depends_on:
       - db
 ``` 
