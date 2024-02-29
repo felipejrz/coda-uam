@@ -48,21 +48,18 @@ class TutoriaUpdateView(LoginRequiredMixin, ContextNotificationsMixin, ContextCo
     model = Tutoria
     fields = ['tema', 'fecha', 'descripcion']
 
-    success_url  = reverse_lazy("Tutorias-alumno")
+    success_url  = reverse_lazy('Tutorias-historial')
 
     template_name = 'Tutorias/editarTutoria.html'
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         rol = self.request.user.get_rol()
-        if rol == ALUMNO:
-            alumno = Alumno.objects.get(pk=self.request.user)
-            recipient = Tutor.objects.filter(alumno.tutor_asignado)
-        else:
-            recipient = Alumno.objects.filter(pk=self.get_object().alumno)
-        
-        notify.send(alumno, recipient=recipient, verb='Tutoria Modificada')
-        return super().form_valid(form)
+        if rol == TUTOR:
+             tutor = Tutor.objects.get(pk=self.request.user)
+        recipient = Alumno.objects.filter(pk=self.get_object().alumno)
 
+        notify.send(tutor, recipient=recipient, verb='Tutoria Modificada')
+        return super().form_valid(form)
 # Solicitud Tutorias
 class TutoriaCreateView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, CreateView):
     #model = Tutoria
@@ -85,13 +82,14 @@ class TutoriaCreateView(LoginRequiredMixin, ContextNotificationsMixin, ContextCo
 
         notify.send(alumno, recipient=recipient, verb='Nueva solicitud de tutoria', description=f'{form.instance.get_tema_display()}')
         
-        send_mail(
-            subject='Nueva solicitud de tutoria',
-            message=f'Solicitud de tutoria creada por {alumno.get_full_name()} con tema: {form.instance.get_tema_display()}',
-            from_email=CORREO,
-            recipient_list=[recipient.email],
-            fail_silently=False
-        )
+        # TODO utilizar una rutina para mandar los correos
+        #send_mail(
+         #   subject='Nueva solicitud de tutoria',
+          #  message=f'Solicitud de tutoria creada por {alumno.get_full_name()} con tema: {form.instance.get_tema_display()}',
+           # from_email=CORREO,
+            #recipient_list=[recipient.email],
+            #fail_silently=False
+    
         
 
         return super().form_valid(form)
@@ -160,7 +158,20 @@ class VerTutoriasCordinadorListView(LoginRequiredMixin, ContextNotificationsMixi
         queryset = super().get_queryset().all()   
         
         return queryset 
+
+
+class VerTutoriasCodaListView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, ListView):
+     
+    model = Tutoria
+    template_name='Tutorias/verTutorias_cooda.html'
+
+    def get_queryset(self) -> QuerySet[Any]:
+        
+        queryset = super().get_queryset().all()   
+        
+        return queryset 
     
+
 class VerTutoriasTutorListView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, ListView):
      
     model = Tutoria
@@ -179,6 +190,7 @@ class VerTutoriasTutorListView(LoginRequiredMixin, ContextNotificationsMixin, Co
         context["tutorados"] = tutorados
         return context
 
+
 class VerTutoriasAlumnoListView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, ListView):
      
     model = Tutoria
@@ -195,6 +207,7 @@ class VerTutoriasAlumnoListView(LoginRequiredMixin, ContextNotificationsMixin, C
         
         return queryset
     
+
 # TODO Eliminar para prod
 class DebugTutoriasView(LoginRequiredMixin, ListView):
 
@@ -203,6 +216,7 @@ class DebugTutoriasView(LoginRequiredMixin, ListView):
 
     def get_queryset(self) -> QuerySet[Any]:
         return super().get_queryset()
+    
     
 class QuickCreateTutoriaView(LoginRequiredMixin, ContextNotificationsMixin, ContextConRolesMixin, CreateView):
     model = Tutoria

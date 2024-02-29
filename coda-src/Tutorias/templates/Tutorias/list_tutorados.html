@@ -21,7 +21,7 @@
                               <th>Nombre</th>
                               <th>Matricula</th>
                               <th>Correo</th>
-                              <!-- <th>Solicitar Tutoria</th> -->
+                              <th>Solicitaar Tutoria</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -31,7 +31,7 @@
                               <td><a href="{% url 'perfil-alumno' tutoria.alumno.pk %}">{{ tutoria.alumno.first_name }} {{ tutoria.alumno.last_name }}</a></td>
                               <td>{{ tutoria.alumno.matricula }} </td>
                               <td>{{ tutoria.alumno.email}} </td>
-                              <!-- <td> <a href="#">Solicitar Tutoria</a> </td> -->
+                              <td> <a href="{% url 'crear-tutoria' tutoria.alumno.pk%}">Solicitar Tutoria</a> </td>
                             </tr>
                             {% endfor %}
                           </tbody>

@@ -28,7 +28,6 @@
                                                     <th>Tema</th>
                                                     <th>Tutor</th>
                                                     <th>Estado de Aceptación</th>
-                                                    <th>Acciones</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -48,9 +47,6 @@
                                                         {% else %}
                                                         <span class="badge badge-warning text-dark">Pendiente</span>
                                                         {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        <a href="{% url 'Tutorias-update' tutoria.pk %}" class="btn btn-primary btn-sm">Editar</a>
                                                     </td>
                                                 </tr>
                                                 {% endfor %}
