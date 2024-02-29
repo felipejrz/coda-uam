@@ -214,7 +214,7 @@ class VerTutoriasTutorListView(TutorViewMixin, ListView):
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         tutorados = Alumno.objects.filter(tutor_asignado=self.request.user)
-        context["tutorados"] = tutorados
+        context["tutorados"] = [alumno for alumno in tutorados]
         return context
 
 

@@ -17,9 +17,9 @@
               <label for="alumno-filter">Filtrar por Alumno:</label>
               <select id="alumno-filter">
                 <option value="todos">Todos</option>
-                {% for tutoria in object_list %}
-                <option value="{{tutoria.alumno.first_name}} {{tutoria.alumno.last_name}}">
-                  {{tutoria.alumno.first_name}} {{tutoria.alumno.last_name}}</option>
+                {% for alumno in tutorados %}
+                <option value="{{alumno.first_name}} {{alumno.last_name}}">
+                  {{alumno.first_name}} {{alumno.last_name}}</option>
                 {% endfor %}
                 <!-- Agrega más opciones de alumnos según sea necesario -->
               </select>
@@ -38,7 +38,7 @@
                     <th>Observaciones</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="data">
                   {% for tutoria in object_list %}
                   <tr data-alumno="{{ tutoria.alumno.first_name }} {{ tutoria.alumno.last_name }}">
                     <td>{{ tutoria.alumno.first_name }} {{ tutoria.alumno.last_name }}</td>
@@ -84,8 +84,8 @@
       if (selectedAlumno === 'todos') {
         $('tr').show();
       } else {
-        $('tr').hide();
-        $('tr[data-alumno="' + selectedAlumno + '"]').show();
+        $('#data tr').hide();
+        $('#data tr[data-alumno="' + selectedAlumno + '"]').show();
       }
     });
   });
