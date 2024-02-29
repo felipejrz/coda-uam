@@ -1,6 +1,6 @@
 from django import forms
 from .models import Tutoria
-from .constants import TEMAS
+from .constants import TEMAS, ESTADO, ACEPTADO, PENDIENTE
 
 class FormTutorias(forms.ModelForm):
 
@@ -9,6 +9,7 @@ class FormTutorias(forms.ModelForm):
     tema = forms.ChoiceField(choices=TEMAS)
     fecha = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
     descripcion = forms.CharField(widget=forms.Textarea, max_length=255, required=False)
+    estado = forms.ChoiceField(choices=ESTADO, required=False)
 
 
     class Meta:

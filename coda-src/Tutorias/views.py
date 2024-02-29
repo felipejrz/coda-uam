@@ -256,14 +256,12 @@ class QuickCreateTutoriaView(AlumnoViewMixin, CreateView):
         alumno = get_object_or_404(Alumno, pk=self.request.user)
         form.instance.alumno = alumno
         form.instance.tutor = alumno.tutor_asignado
-        # form.instance.tema = alumno.tutor_asignado.tema_tutorias
-        # form.instance.fecha = datetime.now()
-        # form.instance.descripcion = "Tutoria registrada con QR"
-        #print(f'Form: {form.instance}')
-        #self.object.estado = PENDIENTE
+        form.instance.estado = ACEPTADO
+        
+        
         rol = self.request.user.get_rol()
         if rol == ALUMNO:
-            recipient = alumno.tutor_asignado
+            recipient = alumno.tutor_asignado   # No sé que hace este bloque, pero no lo voy a quitar para que no se rompa. -Alfredo
         else:
             recipient = Alumno.objects.filter(pk=self.get_object().alumno)
         

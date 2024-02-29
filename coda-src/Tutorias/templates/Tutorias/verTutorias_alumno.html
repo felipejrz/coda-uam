@@ -39,10 +39,9 @@
                                                     <td>{{ tutoria.get_tema_display }} </td>
                                                     <td>{{ tutoria.tutor.first_name }} {{ tutoria.tutor.last_name }}</td>
                                                     <td>
-                                                        {% if tutoria.estado == 'Aceptado' %}
+                                                        {% if tutoria.estado == 'ACE' %}
                                                         <span class="badge bg-success">Aceptada</span>
-                                                        <span class="badge bg-success">Aceptado</span>
-                                                        {% elif tutoria.estado == 'Rechazado' %}
+                                                        {% elif tutoria.estado == 'REJ' %}
                                                         <span class="badge badge-warning text-dark">Rechazada</span>
                                                         {% else %}
                                                         <span class="badge badge-warning text-dark">Pendiente</span>
