@@ -15,6 +15,17 @@ services:
     ports:
       - "8000:8000"
     environment:
+      - DJANGO_SECRET_KEY=django-insecure-0ea983f4d69ba8061a684379fee776c5118e0a16aa305c153a
+      - RDS_DB_NAME=coda
+      - RDS_USERNAME=postgres
+      - RDS_HOSTNAME=db
+      - RDS_PORT=5432
+      - RDS_PASSWORD=postgres
+      - DJANGO_DEBUG=True
+      - IP_COMPUTADORA=127.0.0.1
+      - TUTORIAS_DOMINIO=localhost
+      - EMAIL_DOMAIN=a@a.com
+      - EMAIL_HOST_PASSWORD=1234
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres

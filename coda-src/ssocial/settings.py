@@ -14,7 +14,7 @@ from pathlib import Path
 # settings.py
 
 # TODO mochar esto en prod
-from .env_vars import *
+# from .env_vars import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
