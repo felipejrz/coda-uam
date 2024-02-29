@@ -16,7 +16,7 @@ MATEMATICAS = "MAT"
 COMPUTACION = "COM"
 
 CARRERAS = [
-        ('', "Seleccione Carrera"),
+        ('', "Seleccione una"),
         (MATEMATICAS, "Matemáticas Aplicadas"),
         (COMPUTACION, "Ingeniería en Computación"),
     ]
