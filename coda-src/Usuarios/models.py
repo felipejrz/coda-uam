@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from .constants import ROLES, CARRERAS
 from Tutorias.constants import TEMAS, OTRO
-
+from .constants import CODA, TUTOR, COORDINADOR, ALUMNO
 
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
@@ -78,17 +78,13 @@ class Tutor(Usuario):
         verbose_name_plural = 'Tutores'
 
     def save(self, commit=True) -> None:
-        self.rol = "TUT"
+        self.rol = TUTOR
 
         # Deprecated
         # if self.es_coordinador :
         #     self.rol = "COR"
             
         return super(Tutor, self).save()
-    
-class GrupoCoda():
-    pass
-
 
 
 class Coda(Usuario):
@@ -103,7 +99,7 @@ class Coda(Usuario):
         verbose_name_plural = 'CODAA'
 
     def save(self, commit=True) -> None:
-        self.rol = "CODA"
+        self.rol = CODA
         return super(Coda, self).save()
     
 
@@ -120,7 +116,7 @@ class Cordinador(Usuario):
         verbose_name_plural = 'Cordinadores'
 
     def save(self, commit=True) -> None:
-        self.rol = "COR"
+        self.rol = COORDINADOR
         return super(Cordinador, self).save()
 
 def alumno_trayectoria_path(instance, filename):
@@ -133,7 +129,7 @@ class Alumno(Usuario):
     tutor_asignado = models.ForeignKey(Tutor, on_delete=models.PROTECT)
 
     def save(self, commit=True) -> None:
-        self.rol = "ALU"
+        self.rol = ALUMNO
         return super(Alumno, self).save()
     
     class Meta:
