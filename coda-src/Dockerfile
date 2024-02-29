@@ -15,8 +15,7 @@ RUN pip install -r requirements.txt
 # Copia el resto del código de la aplicación al directorio de trabajo del contenedor
 COPY . /app/
 
-# Ejecuta makemigrations durante la construcción de la imagen
-RUN python manage.py makemigrations
+# Ejecuta migrate durante la construcción de la imagen
 RUN python manage.py migrate
 
 # Expone el puerto 8000 para acceder a la aplicación Django
