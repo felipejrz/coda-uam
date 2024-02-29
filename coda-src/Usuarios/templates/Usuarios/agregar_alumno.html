@@ -41,14 +41,19 @@
                                 </div>
     
                                 <!-- Text input -->
-                                <div class="mb-4">
-                                    <!-- <select class="form-select">
-                                        <option selected>Carrera</option>
-                                        <option value="1">Ingenería en Computación</option>
-                                        <option value="2">Matematicas Aplicadas</option>
-                                    </select> -->
+                                <!-- Select input -->
+                                <div class="form-floating mb-4">
+                                
                                     {% render_field form.carrera class="form-select" id="carrera"%}
-                                    <!-- <label class="form-label" for="carrera">Carrera</label> -->
+                                    <label class="form-label" for="carrera">Carrera</label>
+                                    
+                                </div>
+
+                                <!-- Tutor Imput -->
+                                <div class="form-floating mb-4">
+                                    <!-- <input type="text" class="form-control" value=""/> -->
+                                    {% render_field form.tutor_asignado class="form-select" id="tutor"%}
+                                    <label class="form-label" for="tutor">Tutor asignado</label>
                                 </div>
     
                                 <!-- Numero de cuenta input -->
@@ -81,15 +86,9 @@
                                 <div class="form-outline mb-4">
                                     <!-- <input type="text" class="form-control" value=""/> -->
                                     {% render_field form.password2 type="password" class="form-control" id="password2"%}
-                                    <label class="form-label" for="password2">Vuelva a escribir su contraseña</label>
+                                    <label class="form-label" for="password2">Vuelva a escribir la contraseña</label>
                                 </div>
                                 
-    
-                                <!-- Tutor Imput -->
-                                <div class="form-outline mb-4">
-                                    <!-- <input type="text" class="form-control" value=""/> -->
-                                    {% render_field form.tutor_asignado class="form-select" id="tutor"%}
-                                </div>
     
                                 <!-- Submit button -->
                                 <div class="d-grid gap-2 d-md-flex justify-content-center">
