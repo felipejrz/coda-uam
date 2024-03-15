@@ -25,8 +25,10 @@
     <label for="docente-filter">Filtrar por Docente:</label>
     <select id="docente-filter">
       <option value="todos">Todos</option>
-      <option value="Docente 1">Docente 1</option>
-      <option value="Docente 2">Docente 2</option>
+      {% for tutor in tutores %}
+      <option value="{{tutor.first_name}} {{tutor.last_name}}">
+        {{tutor.first_name}} {{tutor.last_name}}</option>
+      {% endfor %}
       <!-- Agrega más opciones de docentes según sea necesario -->
     </select>
   </div>
@@ -42,10 +44,10 @@
         <th>Descripción</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="data">
       <tr>
         {% for tutoria in object_list %}
-      <tr>
+      <tr data-docente="{{ tutoria.tutor.first_name }} {{ tutoria.tutor.last_name }}">
         <td>{{ tutoria.alumno.first_name }} {{ tutoria.alumno.last_name }}</td>
         <td>{{ tutoria.fecha|date }}</td>
         <td>{{ tutoria.fecha|date:"P" }}</td>
@@ -71,8 +73,8 @@ $(document).ready(function() {
     if (selectedDocente === 'todos') {
       $('tr').show();
     } else {
-      $('tr').hide();
-      $('tr[data-docente="' + selectedDocente + '"]').show();
+      $('#data tr').hide();
+      $('#data tr[data-docente="' + selectedDocente + '"]').show();
     }
   });
 });
