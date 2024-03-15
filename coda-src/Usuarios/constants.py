@@ -27,7 +27,7 @@ TEMPLATES = {
     # COORDINADOR: 'Usuarios/HeaderFooterCoord.html',
     ALUMNO: 'Usuarios/navbar_alumno.html',
     TUTOR: 'Usuarios/navbar_tutor.html',
-    COORDINADOR: 'Usuarios/navbar_tutor.html',
+    COORDINADOR: 'Usuarios/navbar_coord.html',
     CODA: 'Usuarios/navbar_coda.html',
 }
 

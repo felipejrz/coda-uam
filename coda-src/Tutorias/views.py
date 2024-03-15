@@ -17,11 +17,12 @@ from django.core.mail import send_mail
 
 from datetime import datetime
 
-from .models import Tutoria, Tutor, Alumno
+from .models import Tutoria
 from .forms import FormTutorias
 from .constants import PENDIENTE, ACEPTADO, RECHAZADO
 from Usuarios.constants import TUTOR, ALUMNO, COORDINADOR, TEMPLATES, CORREO
 from Usuarios.views import BaseAccessMixin, CodaViewMixin, TutorViewMixin, AlumnoViewMixin, CordinadorViewMixin
+from Usuarios.models import Tutor, Alumno, Cordinador
 from notifications.signals import notify
 from smtplib import SMTPException
 
@@ -149,16 +150,45 @@ class HistorialTutoriasListView(BaseAccessMixin, ListView):
 
 
 
-class VerTutoriasCordinadorListView(CordinadorViewMixin, ListView):
+class VerTutoriasCoordinadorListView(CordinadorViewMixin, ListView):
      
     model = Tutoria
     template_name='Tutorias/verTutorias_cordinador.html'
 
     def get_queryset(self) -> QuerySet[Any]:
         
-        queryset = super().get_queryset().all()   
+        coord = get_object_or_404(Cordinador, pk=self.request.user.pk)
+        tutores = Tutor.objects.all().filter(coordinacion=coord.coordinacion)
+        queryset = super().get_queryset().filter(tutor__in=tutores)   
         
         return queryset 
+    
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+
+        #tutor = Tutor.objects.get(pk=self.kwargs.get('pk'))
+        coord = get_object_or_404(Cordinador, pk=self.request.user.pk)
+        tutores = Tutor.objects.all().filter(coordinacion=coord.coordinacion)
+        context["tutores"] = tutores
+
+        return context
+    
+class VerTutoriasCoordinadorPorTutorListView(CordinadorViewMixin, ListView):
+     
+    model = Tutoria
+    template_name='Tutorias/verTutorias_cordinador_portutor.html'
+
+    def get_queryset(self) -> QuerySet[Any]:
+        
+        queryset = super().get_queryset().filter(tutor=self.kwargs.get('pk'))   
+        
+        return queryset 
+    
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        tutor = Tutor.objects.get(pk=self.kwargs.get('pk'))
+        context["tutor"] = tutor
+        return context
 
 
 class VerTutoriasCodaListView(CodaViewMixin, ListView):
@@ -182,10 +212,36 @@ class VerTutoriasCodaListView(CodaViewMixin, ListView):
 class VerTutoresListView(CodaViewMixin, ListView):
     model = Tutor
     template_name = 'Tutorias/verTutores_coda.html'
+
+class VerTutoresCoordListView(CordinadorViewMixin, ListView):
+    model = Tutor
+    template_name = 'Tutorias/verTutores_cordinador.html'
+
+    def get_queryset(self) -> QuerySet[Any]:
+        coord = get_object_or_404(Cordinador, pk=self.request.user.pk)
+
+        queryset = super().get_queryset().filter(coordinacion=coord.coordinacion)
+        return queryset
     
 class VerTutoradosCodaListView(CodaViewMixin, ListView):
     model = Alumno
     template_name = 'Tutorias/verTutorados_coda.html'
+    
+    def get_queryset(self) -> QuerySet[Any]:
+        
+        queryset = super().get_queryset().filter(tutor_asignado=self.kwargs.get('pk'))   
+        
+        return queryset 
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        tutor = Tutor.objects.get(pk=self.kwargs.get('pk'))
+        context["tutor"] = tutor
+        return context
+    
+class VerTutoradosCoordinadorListView(CordinadorViewMixin, ListView):
+    model = Alumno
+    template_name = 'Tutorias/verTutorados_cordinador.html'
     
     def get_queryset(self) -> QuerySet[Any]:
         

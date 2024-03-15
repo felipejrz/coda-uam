@@ -129,12 +129,12 @@ def login_success(request):
     if Tutor.objects.filter(pk=request.user.pk).exists():
         return redirect('Tutorias-tutor')
     if Cordinador.objects.filter(pk=request.user.pk).exists():
-        return redirect('Tutorias-cordinador')
+        return redirect('Tutorias-Coordinacion')
     if Coda.objects.filter(pk=request.user.pk).exists():
         return redirect('Tutores-Coda')
     
     print('ERROR: Usuario no definido')
-    return HttpResponseBadRequest("ERROR. Tipo de usuario no definido")
+    return HttpResponseBadRequest("ERROR. Tipo de usuario o rol no definido")
     #return redirect()
     # if Usuario.objects.filter(pk=request.user.pk).exists:
     #     return redirect('Tutorias-coordinador')

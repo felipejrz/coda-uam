@@ -12,14 +12,16 @@ urlpatterns = [
     path('tutorias/<int:pk>/', views.TutoriasDetailView.as_view(), name='Tutorias-detail'),
     path('editar-tutoria/<int:pk>', views.TutoriaUpdateView.as_view(), name='Tutorias-update'),
     path('crear-tutoria/', views.TutoriaCreateView.as_view(), name='Tutorias-create'),
-    path('tutorias-cordinador/', views.VerTutoriasCordinadorListView.as_view(), name='Tutorias-Cordinador'),
     
     
     
     #path('reset-password/', views.DebugTutoriasView.as_view(), name='reset_password'),
     
     # URLS COORDINADORESs
-    path('crear-tutoria/', views.TutoriaCreateView.as_view(), name='Tutorias-create'),
+    path("tutores-cord/", views.VerTutoresCoordListView.as_view(), name="Tutores-Cordinador"),
+    path('tutorias-coordinador/', views.VerTutoriasCoordinadorListView.as_view(), name='Tutorias-Coordinacion'),
+    path('tutorias-coordinador/<int:pk>', views.VerTutoriasCoordinadorPorTutorListView.as_view(), name='Tutorias-Cordinador'),
+    path('tutorados-coordinador/<int:pk>', views.VerTutoradosCoordinadorListView.as_view(), name='Tutorados-Cordinador'),
 
 
     # URLS ALUMNOS
