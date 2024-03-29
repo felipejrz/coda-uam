@@ -26,6 +26,92 @@ from Usuarios.models import Tutor, Alumno, Cordinador
 from notifications.signals import notify
 from smtplib import SMTPException
 
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+from io import BytesIO
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from django.shortcuts import get_object_or_404
+from reportlab.lib.styles import ParagraphStyle
+from django.utils import timezone
+
+#Funcion para descargar pdf
+def generar_pdf(request):
+    tutor_loggeado = get_object_or_404(Tutor, pk=request.user)
+
+    # Obtener las fechas seleccionadas del formulario HTML
+    fecha_inicio_str = request.GET.get('fecha_inicio')
+    fecha_fin_str = request.GET.get('fecha_fin')
+
+    # Convertir las fechas de cadena a objetos de fecha si se han proporcionado
+    if fecha_inicio_str and fecha_fin_str:
+        fecha_inicio = timezone.datetime.strptime(fecha_inicio_str, '%Y-%m-%d')
+        fecha_fin = timezone.datetime.strptime(fecha_fin_str, '%Y-%m-%d')
+
+        # Filtrar las tutorías por las fechas seleccionadas
+        tutorias_tutor = Tutoria.objects.filter(tutor=tutor_loggeado, fecha__range=(fecha_inicio, fecha_fin))
+    else:
+        # Si no se han proporcionado fechas, obtener todas las tutorías del tutor
+        tutorias_tutor = Tutoria.objects.filter(tutor=tutor_loggeado)
+
+    # Crear un buffer de bytes para almacenar el PDF
+    buffer = BytesIO()
+
+    # Crear el objeto PDF usando el buffer
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    elements = []
+
+    # Encabezado del PDF
+    header_style = ParagraphStyle(name='HeaderStyle', fontSize=12)
+    header_text = 'Historial tutorias'
+    header_paragraph = Paragraph(header_text, header_style)
+    elements.append(header_paragraph)
+
+    # Agregar nombre del tutor
+    tutor_name = f'Nombre Tutor: {tutor_loggeado.first_name} {tutor_loggeado.last_name}'
+    tutor_name_paragraph = Paragraph(tutor_name, header_style)
+    elements.append(tutor_name_paragraph)
+
+    # Agregar un espacio en blanco para separar el nombre del tutor de la tabla
+    elements.append(Spacer(1, 12))  # Ajusta el segundo valor para controlar la altura de la separación
+
+    # Agregar datos como una tabla
+    data = [["Alumno", 'Fecha', 'Hora', 'Tema', 'Observaciones']]
+
+    for tutoria in tutorias_tutor:
+        data.append([
+            f"{tutoria.alumno.first_name} {tutoria.alumno.last_name}",
+            tutoria.fecha.strftime('%Y-%m-%d'),
+            tutoria.fecha.strftime('%I:%M %p'),
+            tutoria.get_tema_display(),
+        ])
+
+    # Estilo de la tabla
+    style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.white),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.white), 
+        ('GRID', (0, 0), (-1, -1), 1, colors.orange), 
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'), 
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'), 
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12), 
+    ])
+
+    # Crear la tabla
+    tabla = Table(data)
+    tabla.setStyle(style)
+    elements.append(tabla)
+
+    # Construir el PDF
+    doc.build(elements)
+
+    # Resetear el buffer de bytes al inicio
+    buffer.seek(0)
+
+    # Devolver el PDF como una respuesta de archivo
+    return FileResponse(buffer, as_attachment=True, filename='tabla.pdf')
+
 # Create your views here.
 def index(request):
     return HttpResponse("Tutorias app index placeholder")
