@@ -1,17 +1,16 @@
+import qrcode
 from typing import Any, Dict
 from django.shortcuts import get_object_or_404, redirect
 from django.db.models.query import QuerySet
 from django.forms.models import BaseModelForm
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
-#from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import View
 from django.urls import reverse_lazy
 from django.utils.text import slugify
-import qrcode
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 
@@ -27,14 +26,14 @@ from notifications.signals import notify
 from smtplib import SMTPException
 
 from django.http import FileResponse
+from django.utils import timezone
 from reportlab.pdfgen import canvas
 from io import BytesIO
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from django.shortcuts import get_object_or_404
-from reportlab.lib.styles import ParagraphStyle
-from django.utils import timezone
 
 #Funcion para descargar pdf
 def generar_pdf(request):
@@ -112,6 +111,32 @@ def generar_pdf(request):
     # Devolver el PDF como una respuesta de archivo
     return FileResponse(buffer, as_attachment=True, filename='tabla.pdf')
 
+#Generar archivo txt de tutorias
+def generar_archivo_txt(request):
+    if request.method == 'POST':
+        tutor = request.POST.get('tutor')
+        alumno = request.POST.get('alumno')
+        fecha = request.POST.get('fecha')
+        tema = request.POST.get('tema')
+        descripcion = request.POST.get('descripcion')
+
+    contenido = "Tutoria \n"
+    contenido += f"Tutor: {tutor}\n"
+    contenido += f"Alumno: {alumno}\n"
+    contenido += f"Fecha: {fecha}\n"
+    contenido += f"Tema: {tema}\n"
+    contenido += f"Descripción: {descripcion}\n"
+
+    # Escribe el contenido en un archivo de texto
+    with open("Tutoria.txt", "w") as archivo:
+        archivo.write(contenido)
+
+    # Abre el archivo de texto y lo sirve como una respuesta HTTP para descargarlo
+    with open("Tutoria.txt", "rb") as archivo:
+        response = HttpResponse(archivo.read(), content_type='text/plain')
+        response['Content-Disposition'] = 'attachment; filename=Tutoria.txt'
+        return response
+
 # Create your views here.
 def index(request):
     return HttpResponse("Tutorias app index placeholder")
@@ -141,7 +166,7 @@ class TutoriaUpdateView(BaseAccessMixin, UpdateView):
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         rol = self.request.user.get_rol()
         if rol == TUTOR:
-             tutor = Tutor.objects.get(pk=self.request.user)
+            tutor = Tutor.objects.get(pk=self.request.user)
         recipient = Alumno.objects.filter(pk=self.get_object().alumno)
 
         notify.send(tutor, recipient=recipient, verb='Tutoria Modificada')
@@ -233,11 +258,11 @@ class HistorialTutoriasListView(BaseAccessMixin, ListView):
         
         return queryset
 
-
-
+class HistorialTutoriasGenerateView(BaseAccessMixin, ListView):
+    model = Tutoria
+    template_name = 'Tutorias/generarhistorialtutoria.html'
 
 class VerTutoriasCoordinadorListView(CordinadorViewMixin, ListView):
-     
     model = Tutoria
     template_name='Tutorias/verTutorias_cordinador.html'
 
@@ -277,12 +302,10 @@ class VerTutoriasCoordinadorPorTutorListView(CordinadorViewMixin, ListView):
         return context
 
 
-class VerTutoriasCodaListView(CodaViewMixin, ListView):
-     
+class VerTutoriasCodaListView(CodaViewMixin, ListView):    
     model = Tutoria
     template_name='Tutorias/verTutorias_cooda.html'
     
-
     def get_queryset(self) -> QuerySet[Any]:
         
         queryset = super().get_queryset().filter(tutor=self.kwargs.get('pk'))   
