@@ -1,6 +1,5 @@
 from django.urls import path
 from . import views
-from .views import generar_pdf, generar_archivo_txt
 
 urlpatterns = [
     #path('', views.index, name='index'),
@@ -40,9 +39,8 @@ urlpatterns = [
     path('tutorados-coda/<int:pk>', views.VerTutoradosCodaListView.as_view(), name='Tutorados-Coda'),
 
 
-
-    path('ruta-pdf/', generar_pdf, name='generar_pdf'),
-    path('generar-txt/', generar_archivo_txt, name='generar_txt'),
+    path('ruta-pdf/', views.generar_pdf, name='generar_pdf'),
+    path('generar-txt/', views.generar_archivo_txt, name='generar_txt'),
     #path('debug-tutorias/', views.DebugTutoriasView.as_view(), name='debug-tutorias'),
     path('qr-code/', views.QRCodeView.as_view(), name='qr-code'),
     # Desactivamos la tutoria por tutor mientras se arregla la coordinacion de horarios
