@@ -14,7 +14,7 @@ from django.utils.text import slugify
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from .models import Tutoria
 from .forms import FormTutorias
@@ -41,12 +41,12 @@ def generar_pdf(request):
 
     # Obtener las fechas seleccionadas del formulario HTML
     fecha_inicio_str = request.GET.get('fecha_inicio')
-    fecha_fin_str = request.GET.get('fecha_fin')
+    fecha_fin_str = request.GET.get('fecha_fin') 
 
     # Convertir las fechas de cadena a objetos de fecha si se han proporcionado
     if fecha_inicio_str and fecha_fin_str:
         fecha_inicio = timezone.datetime.strptime(fecha_inicio_str, '%Y-%m-%d')
-        fecha_fin = timezone.datetime.strptime(fecha_fin_str, '%Y-%m-%d')
+        fecha_fin = timezone.datetime.strptime(fecha_fin_str, '%Y-%m-%d') + timedelta(days=1)
 
         # Filtrar las tutorías por las fechas seleccionadas
         tutorias_tutor = Tutoria.objects.filter(tutor=tutor_loggeado, fecha__range=(fecha_inicio, fecha_fin))
@@ -112,30 +112,29 @@ def generar_pdf(request):
     return FileResponse(buffer, as_attachment=True, filename='tabla.pdf')
 
 #Generar archivo txt de tutorias
-def generar_archivo_txt(request):
-    if request.method == 'POST':
-        tutor = request.POST.get('tutor')
-        alumno = request.POST.get('alumno')
-        fecha = request.POST.get('fecha')
-        tema = request.POST.get('tema')
-        descripcion = request.POST.get('descripcion')
-
-    contenido = "Tutoria \n"
-    contenido += f"Tutor: {tutor}\n"
-    contenido += f"Alumno: {alumno}\n"
-    contenido += f"Fecha: {fecha}\n"
-    contenido += f"Tema: {tema}\n"
-    contenido += f"Descripción: {descripcion}\n"
+def generar_archivo_txt(request,pk):
+    # Genera el contenido del archivo de texto (aquí es solo un ejemplo)
+    tutor = Tutor.objects.get(pk=pk)
+    tutorias = Tutoria.objects.filter(tutor=tutor)
+    
+    contenido = "Tutorias \n"
+    for tutoria in tutorias:
+        contenido += f"Alumno: {tutoria.alumno.first_name} {tutoria.alumno.last_name}\n"
+        contenido += f"Tutor: {tutoria.tutor.first_name} {tutoria.tutor.last_name}\n"
+        contenido += f"Fecha: {tutoria.fecha}\n"
+        contenido += f"Tema: {tutoria.get_tema_display()}\n"
+        contenido += f"Notas: {tutoria.descripcion}\n\n"
 
     # Escribe el contenido en un archivo de texto
-    with open("Tutoria.txt", "w") as archivo:
+    with open("tutoria.txt", "w") as archivo:
         archivo.write(contenido)
 
     # Abre el archivo de texto y lo sirve como una respuesta HTTP para descargarlo
-    with open("Tutoria.txt", "rb") as archivo:
+    with open("tutoria.txt", "rb") as archivo:
         response = HttpResponse(archivo.read(), content_type='text/plain')
-        response['Content-Disposition'] = 'attachment; filename=Tutoria.txt'
+        response['Content-Disposition'] = 'attachment; filename=archivo.txt'
         return response
+
 
 # Create your views here.
 def index(request):

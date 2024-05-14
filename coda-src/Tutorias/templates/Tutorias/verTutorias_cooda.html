@@ -34,13 +34,9 @@
                                 <td>{{ tutoria.get_tema_display}}</td>
                                 <td>{{ tutoria.descripcion}}</td>
                                 <td>
-                                  <form class="form-inline" method="post" action="{% url 'generar_txt' %}">
+                                  <form class="form-inline" method="post" action="{% url 'generar_txt' tutor.pk %}">
                                     {% csrf_token %}
-                                    <input type="hidden" name="tutor" value="{{tutor.first_name}} {{tutor.last_name}}">
-                                    <input type="hidden" name="alumno" value="{{ tutoria.alumno.first_name }} {{ tutoria.alumno.last_name }}">
-                                    <input type="hidden" name="fecha" value="{{ tutoria.fecha |date}} a las {{ tutoria.fecha|date:"P" }}">
-                                    <input type="hidden" name="tema" value="{{ tutoria.get_tema_display }}">
-                                    <input type="hidden" name="descripcion" value="{{ tutoria.descripcion }}">
+
                                     <button class="btn btn-primary btn-sm" type="submit">Generar Reporte</button>
                                   </form>
                                 </td>                                
