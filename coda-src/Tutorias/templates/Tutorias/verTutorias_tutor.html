@@ -10,21 +10,27 @@
       <div class="col-lg-8 col-xl-10">
         <div class="card border-top border-bottom border-4" style="border-color: #F08200 !important;">
           <div class="card-body p-4">
-            <h3 class="fw-bold mb-4 text-primary">Lista de Tutorias</h3>
+            <h3 class="fw-bold mb-2 text-primary">Lista de Tutorias</h3>
+
 
             <!--Inicio de Filtro-->
-            <div class="filter-bar m-4">
-              <label for="alumno-filter">Filtrar por Alumno:</label>
-              <select id="alumno-filter">
-                <option value="todos">Todos</option>
-                {% for alumno in tutorados %}
-                <option value="{{alumno.first_name}} {{alumno.last_name}}">
-                  {{alumno.first_name}} {{alumno.last_name}}</option>
-                {% endfor %}
-                <!-- Agrega más opciones de alumnos según sea necesario -->
-              </select>
+            <div class="container">
+              <div class="row justify-content-center">
+                <div class="col-md-6">
+                  <div class="filter-bar mb-3">
+                    <label for="alumno-filter" class="form-label">Filtrar por Alumno:</label>
+                    <select id="alumno-filter" class="form-select">
+                      <option value="todos">Todos</option>
+                      {% for alumno in tutorados %}
+                      <option value="{{alumno.first_name}} {{alumno.last_name}}">{{alumno.first_name}} {{alumno.last_name}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+              </div>
             </div>
             <!--Fin Filtro-->
+
 
             <!--Inicio de table-->
             <div class="table-responsive">
@@ -35,7 +41,8 @@
                     <th>Fecha</th>
                     <th>Hora</th>
                     <th>Tema</th>
-                    <th>Observaciones</th>
+                    <th>Editar</th>
+                    <th>Estado</th>
                   </tr>
                 </thead>
                 <tbody id="data">

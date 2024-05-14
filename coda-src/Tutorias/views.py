@@ -72,11 +72,17 @@ def generar_pdf(request):
     tutor_name_paragraph = Paragraph(tutor_name, header_style)
     elements.append(tutor_name_paragraph)
 
+    # Agregar las fechas 
+    fechas_text = f'De: {fecha_inicio_str} a {fecha_fin_str}'
+    fechas_text_paragraph = Paragraph(fechas_text, header_style)
+    elements.append(fechas_text_paragraph)
+
+
     # Agregar un espacio en blanco para separar el nombre del tutor de la tabla
     elements.append(Spacer(1, 12))  # Ajusta el segundo valor para controlar la altura de la separación
 
     # Agregar datos como una tabla
-    data = [["Alumno", 'Fecha', 'Hora', 'Tema', 'Notas']]
+    data = [["Alumno", 'Fecha', 'Hora', 'Tema']]
 
     for tutoria in tutorias_tutor:
         data.append([
@@ -84,7 +90,6 @@ def generar_pdf(request):
             tutoria.fecha.strftime('%Y-%m-%d'),
             tutoria.fecha.strftime('%I:%M %p'),
             tutoria.get_tema_display(),
-            tutoria.descripcion,
         ])
 
     # Estilo de la tabla
@@ -139,8 +144,7 @@ def generar_archivo_txt(request,pk):
         contenido += f"Alumno: {tutoria.alumno.first_name} {tutoria.alumno.last_name}\n"
         contenido += f"Tutor: {tutoria.tutor.first_name} {tutoria.tutor.last_name}\n"
         contenido += f"Fecha: {tutoria.fecha}\n"
-        contenido += f"Tema: {tutoria.get_tema_display()}\n"
-        contenido += f"Notas: {tutoria.descripcion}\n\n"
+        contenido += f"Tema: {tutoria.get_tema_display()}\n\n"
 
     # Escribe el contenido en un archivo de texto
     with open("tutoria.txt", "w") as archivo:

@@ -22,17 +22,31 @@
                                     <label for="fecha_fin" class="form-label">Fecha de fin:</label>
                                     <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" />
                                 </div>
-                                <button type="submit" class="btn btn-primary">Generar PDF</button>
+                                <div class="mb-3">
+                                    <label class="form-label">Seleccionar elementos a incluir:</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="nombre" id="nombre" name="elementos">
+                                        <label class="form-check-label" for="nombre">Nombre</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="notas" id="notas" name="elementos">
+                                        <label class="form-check-label" for="notas">Notas</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="fecha" id="fecha" name="elementos">
+                                        <label class="form-check-label" for="fecha">Fecha</label>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Generar Archivo PDF</button>
                             </form>
                         </div>
-                        
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
 
 <script>
     function filterByDate() {
