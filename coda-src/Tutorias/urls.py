@@ -40,7 +40,7 @@ urlpatterns = [
 
 
     path('ruta-pdf/', views.generar_pdf, name='generar_pdf'),
-    path('generar-txt/', views.generar_archivo_txt, name='generar_txt'),
+    path('generar-txt/<int:pk>', views.generar_archivo_txt, name='generar_txt'),
     #path('debug-tutorias/', views.DebugTutoriasView.as_view(), name='debug-tutorias'),
     path('qr-code/', views.QRCodeView.as_view(), name='qr-code'),
     # Desactivamos la tutoria por tutor mientras se arregla la coordinacion de horarios
