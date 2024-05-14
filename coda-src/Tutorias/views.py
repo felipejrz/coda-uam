@@ -76,7 +76,7 @@ def generar_pdf(request):
     elements.append(Spacer(1, 12))  # Ajusta el segundo valor para controlar la altura de la separación
 
     # Agregar datos como una tabla
-    data = [["Alumno", 'Fecha', 'Hora', 'Tema', 'Observaciones']]
+    data = [["Alumno", 'Fecha', 'Hora', 'Tema', 'Notas']]
 
     for tutoria in tutorias_tutor:
         data.append([
@@ -84,6 +84,7 @@ def generar_pdf(request):
             tutoria.fecha.strftime('%Y-%m-%d'),
             tutoria.fecha.strftime('%I:%M %p'),
             tutoria.get_tema_display(),
+            tutoria.descripcion,
         ])
 
     # Estilo de la tabla
@@ -113,9 +114,25 @@ def generar_pdf(request):
 
 #Generar archivo txt de tutorias
 def generar_archivo_txt(request,pk):
+
     # Genera el contenido del archivo de texto (aquí es solo un ejemplo)
     tutor = Tutor.objects.get(pk=pk)
     tutorias = Tutoria.objects.filter(tutor=tutor)
+
+    # Obtener las fechas seleccionadas del formulario HTML
+    fecha_inicio_str = request.GET.get('fecha_inicio')
+    fecha_fin_str = request.GET.get('fecha_fin') 
+
+    # Convertir las fechas de cadena a objetos de fecha si se han proporcionado
+    if fecha_inicio_str and fecha_fin_str:
+        fecha_inicio = timezone.datetime.strptime(fecha_inicio_str, '%Y-%m-%d')
+        fecha_fin = timezone.datetime.strptime(fecha_fin_str, '%Y-%m-%d') + timedelta(days=1)
+
+        # Filtrar las tutorías por las fechas seleccionadas
+        tutorias = Tutoria.objects.filter(tutor=tutor, fecha__range=(fecha_inicio, fecha_fin))
+    else:
+        # Si no se han proporcionado fechas, obtener todas las tutorías del tutor
+        tutorias = Tutoria.objects.filter(tutor=tutor)
     
     contenido = "Tutorias \n"
     for tutoria in tutorias:
